@@ -132,8 +132,8 @@ let Logged__User__Id = JSON.parse(localStorage.getItem("_Logged__User__Index")) 
 let Logged = JSON.parse(localStorage.getItem("_Logged")) || "false";
 let New__All__User__Arr = All__User__Arr;
 
-const Form__Url = "/JAVASCRIPT/JS__LoginWith-FireBase/Form.html";
-const Home__Url = "/JAVASCRIPT/JS__LoginWith-FireBase/Home.html";
+const Form__Url = "./Form.html";
+const Home__Url = "./Home.html";
 
 async function Get__AllUsers__Data(All__Users) {
   const Logged__User__Index = JSON.parse(localStorage.getItem("_Logged__User__Index")) || 0;
