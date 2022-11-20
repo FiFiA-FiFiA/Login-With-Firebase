@@ -1284,6 +1284,138 @@ img {
 }
 
 
+/* Dlelte Account */
+
+.Container .DeleteAccount__Contaner {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 7;
+  pointer-events: none;
+  animation: Feed__In 0.3s ease-in-out forwards;
+}
+
+.Container .DeleteAccount__Contaner.active {
+  pointer-events: painted;
+  animation: Feed__Up 0.3s ease-in-out forwards;
+}
+
+.Container .DeleteAccount__Contaner .DeleteAccount__Overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: var(--bg__clr-dark-150);
+  opacity: 0.7;
+  z-index: -1;
+}
+
+.Container .DeleteAccount__Contaner .form__Container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 85%;
+  height: auto;
+  max-width: 350px;
+  border: 0.1rem solid var(--bg__clr-dark-700);
+  background: var(--bg__clr-dark-150);
+  border-radius: 0.5rem;
+  transition: 0.3s ease-in-out;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.Container .DeleteAccount__Contaner .form__Container .form__Header {
+  position: sticky;
+  padding: 1rem;
+  top: 0;
+  width: 100%;
+  max-height: 65px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: space-between;
+  background: var(--bg__clr-dark-200);
+  border-bottom: 0.1rem solid var(--bg__clr-dark-700);
+  z-index: 2;
+}
+
+.Container .DeleteAccount__Contaner .form__Container .form__Header div {
+  padding: 1rem;
+}
+
+.Container .DeleteAccount__Contaner .form__Container .form__Header h3 {
+  font-size: 1.2rem;
+  color: var(--bg__clr-dark-900);
+  font-weight: 600;
+}
+
+.Container .DeleteAccount__Contaner .form__Container .form__Header button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: none;
+  border: 0.1rem solid var(--bg__clr-dark-900);
+  border-radius: var(--border__radius-4);
+  height: 35px;
+  width: 35px;
+  min-height: 35px;
+  min-width: 35px;
+}
+
+.Container .DeleteAccount__Contaner .form__Container .form__Header button i {
+  font-size: 1.1rem;
+  color: var(--bg__clr-dark-900);
+}
+
+.Container .DeleteAccount__Contaner .form__Container .Form__Wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  height: auto;
+  padding: 1rem;
+}
+
+.Container .DeleteAccount__Contaner .form__Container .Error__Text {
+  width: calc(100% - 2rem);
+}
+
+.Container .DeleteAccount__Contaner .form__Container .Form__Wrapper .input {
+  position: relative;
+  margin-top: 1rem;
+  width: 100%;
+  height: 45px;
+  border: none;
+  outline: 0.1rem solid var(--bg__clr-dark-700);
+  background: none;
+  border-radius: 0.4rem;
+  padding: 1rem;
+  font-size: 0.9rem;
+  color: var(--bg__clr-dark-700);
+}
+
+.Container .DeleteAccount__Contaner .form__Container .Form__Wrapper .input:first-child {
+  margin: 0;
+}
+
+.Container .DeleteAccount__Contaner .form__Container .Form__Wrapper .input:focus {
+  outline: 0.15rem solid var(--primary-clr);
+  color: var(--bg__clr-light);
+}
+
+
 /* === Form End =================== */
 
 @media screen and (min-width: 1200px) {
@@ -1355,7 +1487,7 @@ img {
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    gap: 0.5rem;
+    gap: 1rem;
   }
   .Container main .Main__Content__Wrapper .Main__Content {
     max-height: calc(100vh - 143px);
@@ -1380,25 +1512,6 @@ img {
   .Container main aside .Follow__Btn__Wrapper {
     padding: 0.5rem;
   }
-  .Container .People__Item {
-    flex-direction: row;
-    justify-content: flex-start;
-  }
-  .Container .People__Item .Profile__Image {
-    min-height: 60px;
-    min-width: 60px;
-    height: 60px;
-    width: 60px;
-  }
-  .Container .People__Item h3 {
-    text-align: start;
-    font-size: 1.2rem;
-    margin-bottom: 0.5rem;
-  }
-  .Container .People__Item span {
-    font-size: 1rem;
-    text-align: start;
-  }
   .Container .Follows__Contaner .Follower__Wrapper {
     width: 100%;
     height: 100%;
@@ -1409,6 +1522,12 @@ img {
   }
   .Container .SwitchAccount__Contaner .form__Container {
     width: 90%;
+  }
+  .Container :is(header, main .Main__Header) {
+    padding: 0 1rem;
+  }
+  .Container nav .Nav__Button__Wrapper {
+    overflow: auto;
   }
 }
 

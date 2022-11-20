@@ -109,8 +109,8 @@ const header__text = document.querySelector("[header__text]");
 
 // User Array
 // let User__Arr = JSON.parse(localStorage.getItem("_User")) || [];
-let Form__Url = "./Form.html";
-let Home__Url = "./Home.html";
+let Form__Url = "/JAVASCRIPT/JS__LoginWith-FireBase/Form.html";
+let Home__Url = "/JAVASCRIPT/JS__LoginWith-FireBase/Home.html";
 
 // Data select
 let Current__Data = new Date().toLocaleDateString();
@@ -119,8 +119,6 @@ Data__Input.setAttribute('max', Filter__Current__Data);
 
 async function Get__AllUsers__Data(All__Users) {
   let User__Arr = All__Users;
-  console.log(User__Arr);
-  // Delete__Users.addEventListener('click', Delete__All__Users);
 
   Btn__Continue.addEventListener('click', SignUp__Valid__Input);
   Btn__Submit.addEventListener('click', SignIn__Valid__Input);
@@ -139,12 +137,6 @@ async function Get__AllUsers__Data(All__Users) {
       document.querySelector('[File__Label]').textContent = "Choose Image";
     }
   });
-  // ======= Eventlistener End ======= //
-
-  function Delete__All__Users() {
-    localStorage.clear();
-    window.location = Form__Url;
-  }
 
   function Opan__SignIn__Container() {
     Form__Wrapper.classList.replace("Sign-Up", "Sign-In");
@@ -179,7 +171,6 @@ async function Get__AllUsers__Data(All__Users) {
     let Sign__SecretKey__Value = SecretKey__Input.value
     let Sign__Password__Value = Password__input.value
     let Sign__Confirm__Password__Value = Confirm__Password__input.value
-    let Image__Url = "";
 
     if (Sign__FirstName__Value != "" && Sign__LastName__Value != "") {
       if (Sign__FirstName__Value.length <= 10 && Sign__LastName__Value.length <= 10) {
@@ -193,12 +184,13 @@ async function Get__AllUsers__Data(All__Users) {
                       if (Sign__Password__Value != "" && Sign__Confirm__Password__Value != "") {
                         if (Sign__Password__Value.length >= 8 && Sign__Confirm__Password__Value.length >= 8) {
                           if (Sign__Password__Value == Sign__Confirm__Password__Value && Sign__Password__Value.toLowerCase() != Sign__Confirm__Password__Value) {
+                            let Image__Url = "";
                             let Image__Reader = new FileReader();
                             Image__Reader.readAsDataURL(File__Input.files[0]);
                             Image__Reader.onload = () => {
                               Image__Url = Image__Reader.result;
                               Check__SignUp__User(Sign__FirstName__Value, Sign__LastName__Value, Sign__Gender__Value, Sign__Email__Value, Image__Url, Sign__Birthday__Value, Sign__Bio__Value, Sign__SecretKey__Value, Sign__Password__Value);
-                            }
+                            };
                           } else {
                             Show__Error("Password not Matched! or no capital letter is used!", 2000);
                           }
@@ -239,13 +231,13 @@ async function Get__AllUsers__Data(All__Users) {
 
   function Check__SignUp__User(FirstName, LastName, Gender, Email, Image, Birthday, Bio, SecretKey, Password) {
     if (User__Arr != "") {
-      let new__arr = User__Arr.filter(i => i.Email == Email);
-      if (new__arr != "") {
-        for (const arr of new__arr) {
-          if (arr.Email == Email) {
+      let Exist__User = User__Arr.filter(i => i.Email == Email);
+      if (Exist__User != "") {
+        for (const user of Exist__User) {
+          if (user.Email == Email) {
             Show__Error("User already exists", 2000);
           } else {
-            // SignUp__User(FirstName, LastName, Gender, Email, Image, Birthday, Bio, SecretKey, Password);
+            SignUp__User(FirstName, LastName, Gender, Email, Image, Birthday, Bio, SecretKey, Password);
             Show__Error("User is registred", 2000);
           }
         }
@@ -369,8 +361,7 @@ async function Get__AllUsers__Data(All__Users) {
               FBW.Update__UserPassById(User__Arr[index].Id, NewPassword__Value);
               FBW.Get__AllUsers();
 
-              // localStorage.setItem("_User", JSON.stringify(User__Arr));
-              Login__User(User__Arr[index], index);
+              setTimeout(() => { Login__User([User__Arr[index]], index) }, 500);
               Show__Error("Password has been changed!", 2000);
             } else {
               Show__Error("Password must contain at least one upperacase character!", 2000);

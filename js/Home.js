@@ -41,7 +41,7 @@ class FireBase {
     });
   }
 
-  async Update__Users__FollowInfo__ById(Id, Follower, Following) {
+  async Update__User__FollowInfo__ById(Id, Follower, Following) {
     await this.FireBaseRef.collection("Users").doc(Id).update({
       FollowerUser: Follower,
       FollowingUser: Following,
@@ -84,6 +84,7 @@ const Nav__Button__Wrapper = document.querySelector("[Nav__Button__Wrapper]");
 const Nav__Btn__Logout = document.querySelector("[Nav__Btn__Logout]");
 const Nav__Btn__SwitchAccount = document.querySelector("[Nav__Btn__SwitchAccount]");
 const Nav__Btn__ChangePassword = document.querySelector("[Nav__Btn__ChangePassword]");
+const Nav__Btn__DeleteAccount = document.querySelector("[Nav__Btn__DeleteAccount]");
 
 const err__text = document.querySelector("[err__text]");
 // ======= Nav End ======= //
@@ -118,11 +119,20 @@ const Following__Tab__Inerr = document.querySelector("[Following__Tab__Inerr]");
 const SwitchAccount__Contaner = document.querySelector("[SwitchAccount__Contaner]");
 const SwitchAccount__Overlay = document.querySelector("[SwitchAccount__Overlay]");
 const Btn__SwitchAccount__Close = document.querySelector("[Btn__SwitchAccount__Close]");
-const Form__err__text = document.querySelector("[Form__err__text]");
+const Form__err__text = document.querySelectorAll("[Form__err__text]");
 const SwitchAccount__Email__Input = document.querySelector("[SwitchAccount__Email__Input]");
 const SwitchAccount__Password__Input = document.querySelector("[SwitchAccount__Password__Input]");
 const Btn__Switch = document.querySelector("[Btn__Switch]");
 // ======= SwitchAccount End ======= //
+
+// ======= DeleteAccount Start ======= //
+const DeleteAccount__Contaner = document.querySelector("[DeleteAccount__Contaner]");
+const DeleteAccount__Overlay = document.querySelector("[DeleteAccount__Overlay]");
+const Btn__DeleteAccount__Close = document.querySelector("[Btn__DeleteAccount__Close]");
+const DeleteAccount__Email__Input = document.querySelector("[DeleteAccount__Email__Input]");
+const DeleteAccount__Password__Input = document.querySelector("[DeleteAccount__Password__Input]");
+const Btn__Delete = document.querySelector("[Btn__Delete]");
+// ======= DeleteAccount End ======= //
 
 // User Array
 let All__User__Arr = JSON.parse(localStorage.getItem("_User")) || [];
@@ -132,8 +142,8 @@ let Logged__User__Id = JSON.parse(localStorage.getItem("_Logged__User__Index")) 
 let Logged = JSON.parse(localStorage.getItem("_Logged")) || "false";
 let New__All__User__Arr = All__User__Arr;
 
-const Form__Url = "./Form.html";
-const Home__Url = "./Home.html";
+const Form__Url = "/JAVASCRIPT/JS__LoginWith-FireBase/Form.html";
+const Home__Url = "/JAVASCRIPT/JS__LoginWith-FireBase/Home.html";
 
 async function Get__AllUsers__Data(All__Users) {
   const Logged__User__Index = JSON.parse(localStorage.getItem("_Logged__User__Index")) || 0;
@@ -141,16 +151,17 @@ async function Get__AllUsers__Data(All__Users) {
   const Logged = JSON.parse(localStorage.getItem("_Logged")) || "false";
 
   let All__User__Arr = All__Users;
-  let Ovner__User = All__User__Arr.filter(user => user.Id == Logged__User__Id);
-  Ovner__User = Ovner__User[0];
-  console.log(Ovner__User);
-  console.log(All__User__Arr);
+  let Ovner__User = All__User__Arr.filter(User => User.Id == Logged__User__Id);
+  Ovner__User = Ovner__User[0] || "undefined";
 
-  Loading__Contaner.classList.remove('active');
-  Container.classList.add('active');
-  if (Ovner__User == "" || Logged == "" || Logged == "false") {
+  if (Ovner__User == "" || Ovner__User == "undefined" || Logged == "" || Logged == "false") {
+    localStorage.setItem('_Logged', "false");
+    localStorage.removeItem('_Logged__User__Index');
+    localStorage.removeItem('_Logged__User__Id');
     window.location = Form__Url;
   }
+  Loading__Contaner.classList.remove('active');
+  Container.classList.add('active');
 
   // ======= Eventlistener Start ======= //
   Btn__User__Icon.addEventListener('click', OpanClose__Nav__Container);
@@ -177,6 +188,11 @@ async function Get__AllUsers__Data(All__Users) {
   SwitchAccount__Overlay.addEventListener('click', Close__SwitchAccount__Contaner);
   Btn__SwitchAccount__Close.addEventListener('click', Close__SwitchAccount__Contaner);
   Btn__Switch.addEventListener('click', SignIn__Valid__Input);
+
+  Nav__Btn__DeleteAccount.addEventListener('click', Open__DeleteAccount__Contaner);
+  DeleteAccount__Overlay.addEventListener('click', Close__DeleteAccount__Contaner);
+  Btn__DeleteAccount__Close.addEventListener('click', Close__DeleteAccount__Contaner);
+  Btn__Delete.addEventListener('click', Delete__Valid__Input);
   // ======= Eventlistener End ======= //
 
   Follower__Tab__Btn.forEach((btn, i) => {
@@ -233,15 +249,12 @@ async function Get__AllUsers__Data(All__Users) {
     Follow__Btn.setAttribute("index", i);
     Unfollow__Btn.setAttribute("index", i);
 
-    let Index = Logged__User__Index;
-    let Logged__User = All__User__Arr[Index];
+    let FollowerUser = All__User__Arr[i].FollowerUser;
 
     if (Aside__Container.classList.contains('active')) {
       if (All__User__Arr[i].FollowerUser != "") {
-        let User__Follower = All__User__Arr[i].FollowerUser;
-
-        for (const i in User__Follower) {
-          if (User__Follower[i].Email == Logged__User.Email) {
+        for (const key in FollowerUser) {
+          if (FollowerUser[key].Id == Ovner__User.Id) {
             Follow__Btn__Wrapper.classList.replace('Follow', "Unfollow");
             Follow__Btn__Wrapper.classList.add("Unfollow");
           } else {
@@ -254,7 +267,7 @@ async function Get__AllUsers__Data(All__Users) {
         Follow__Btn__Wrapper.classList.add("Follow");
       }
 
-      if (All__User__Arr[i].Email == Logged__User.Email) {
+      if (All__User__Arr[i].Id == Ovner__User.Id) {
         Aside__Title.textContent = "Your Information";
         Follow__Btn__Wrapper.classList.add("hidden");
       } else {
@@ -463,11 +476,13 @@ async function Get__AllUsers__Data(All__Users) {
   function Follow__User() {
     let i = Follow__Btn.getAttribute("index");
 
+    console.log(All__User__Arr[i].FollowerUser);
+
     if (!All__User__Arr[i].FollowerUser.includes(Ovner__User)) {
       let FollowerUser = All__User__Arr[i].FollowerUser;
       FollowerUser.push(Ovner__User);
 
-      FBW.Update__Users__FollowInfo__ById(All__User__Arr[i].Id, FollowerUser, []);
+      FBW.Update__User__FollowInfo__ById(All__User__Arr[i].Id, FollowerUser, []);
       Follow__Btn__Wrapper.classList.replace('Follow', "Unfollow");
     } else {
       Follow__Btn__Wrapper.classList.replace('Unfollow', "Follow");
@@ -476,7 +491,8 @@ async function Get__AllUsers__Data(All__Users) {
     if (!Ovner__User.FollowingUser.includes(All__User__Arr[i])) {
       let FollowingUser = Ovner__User.FollowingUser;
       FollowingUser.push(All__User__Arr[i]);
-      FBW.Update__Users__FollowInfo__ById(Ovner__User.Id, [], FollowingUser);
+
+      FBW.Update__User__FollowInfo__ById(Ovner__User.Id, [], FollowingUser);
     }
 
     Get__AllUsers__Data(All__User__Arr);
@@ -492,7 +508,7 @@ async function Get__AllUsers__Data(All__Users) {
     All__User__Arr[i].FollowerUser.splice(Remove__Index, 1);
 
     let FollowingUser = All__User__Arr[i].FollowerUser;
-    FBW.Update__Users__FollowInfo__ById(Ovner__User.Id, [], FollowingUser);
+    FBW.Update__User__FollowInfo__ById(All__User__Arr[i].Id, FollowingUser, []);
 
     Get__AllUsers__Data(All__User__Arr);
     Get__OvnerUser__Data();
@@ -649,6 +665,10 @@ async function Get__AllUsers__Data(All__Users) {
     SwitchAccount__Contaner.classList.add('active');
   }
 
+  function Open__DeleteAccount__Contaner() {
+    DeleteAccount__Contaner.classList.add('active');
+  }
+
   function SignIn__Valid__Input() {
     let Email__Value = SwitchAccount__Email__Input.value;
     let Password__Value = SwitchAccount__Password__Input.value;
@@ -657,6 +677,25 @@ async function Get__AllUsers__Data(All__Users) {
       if (Password__Value != "") {
         if (Password__Value.length >= 8) {
           Check__SignIn__User(Email__Value, Password__Value);
+        } else {
+          SwitchAccount__Show__Error("Password should be minimum 8 characters!", 3000);
+        }
+      } else {
+        SwitchAccount__Show__Error("password can't be empty!", 3000);
+      }
+    } else {
+      SwitchAccount__Show__Error("Email can't be empty!", 3000);
+    }
+  }
+
+  function Delete__Valid__Input() {
+    let Email__Value = DeleteAccount__Email__Input.value;
+    let Password__Value = DeleteAccount__Password__Input.value;
+
+    if (Email__Value != "") {
+      if (Password__Value != "") {
+        if (Password__Value.length >= 8) {
+          Check__Delete__User(Email__Value, Password__Value);
         } else {
           SwitchAccount__Show__Error("Password should be minimum 8 characters!", 3000);
         }
@@ -682,6 +721,19 @@ async function Get__AllUsers__Data(All__Users) {
     }
   }
 
+  function Check__Delete__User(Email, Password) {
+    if (All__User__Arr != "") {
+      let New__Ovner__User = All__User__Arr.filter(i => i.Email == Email && i.Password == Password);
+      if (New__Ovner__User != "") {
+        Delete__User(New__Ovner__User);
+      } else {
+        SwitchAccount__Show__Error("User not found!", 2000);
+      }
+    } else {
+      SwitchAccount__Show__Error("User doesn't exist!", 2000);
+    }
+  }
+
   function Switch__Account(New__Logged__User, Index) {
     let Id = New__Logged__User[0].Id;
     localStorage.setItem('_Logged', "true");
@@ -692,8 +744,21 @@ async function Get__AllUsers__Data(All__Users) {
     window.location = Home__Url;
   }
 
+  function Delete__User(New__Logged__User) {
+    let Id = New__Logged__User[0].Id;
+    localStorage.setItem('_Logged', "false");
+    localStorage.removeItem('_Logged__User__Index');
+    localStorage.removeItem('_Logged__User__Id');
+    FBW.Delete__UsersById(Id);
+    setTimeout(() => { window.location = Form__Url }, 500);
+  }
+
   function Close__SwitchAccount__Contaner() {
     SwitchAccount__Contaner.classList.remove('active');
+  }
+
+  function Close__DeleteAccount__Contaner() {
+    DeleteAccount__Contaner.classList.remove('active');
   }
 
   function Close__Aside__Contaner() {
@@ -710,10 +775,14 @@ async function Get__AllUsers__Data(All__Users) {
   }
 
   function SwitchAccount__Show__Error(err, duration) {
-    Form__err__text.classList.add("active");
-    Form__err__text.innerText = err;
+    Form__err__text.forEach(Text => {
+      Text.classList.add("active");
+      Text.textContent = err;
+    })
     setTimeout(() => {
-      Form__err__text.classList.remove("active");
+      Form__err__text.forEach(Text => {
+        Text.classList.remove("active");
+      })
     }, duration);
   }
 }
