@@ -109,8 +109,8 @@ const header__text = document.querySelector("[header__text]");
 
 // User Array
 // let User__Arr = JSON.parse(localStorage.getItem("_User")) || [];
-let Form__Url = "/JAVASCRIPT/JS__LoginWith-FireBase/Form.html";
-let Home__Url = "/JAVASCRIPT/JS__LoginWith-FireBase/Home.html";
+let Form__Url = "./Form.html";
+let Home__Url = "./Home.html";
 
 // Data select
 let Current__Data = new Date().toLocaleDateString();
